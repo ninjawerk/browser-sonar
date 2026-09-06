@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Browser Sonar — acoustic sensing with a laptop speaker</title>
+    <meta
+      name="description"
+      content="Turn any laptop or phone into an acoustic sonar using only the built-in speaker and microphone. Everything runs locally in the browser."
+    />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📡</text></svg>" />
+  </head>
+  <body>
+    <main class="app">
+      <header class="hero">
+        <div class="hero-text">
+          <h1>Browser Sonar</h1>
+          <p class="lede">
+            Your laptop plays a chirp you can barely hear, listens for the echo, and
+            works out what moved. No install, no server, no data leaves this tab —
+            just the speaker and microphone you already have.
+          </p>
+          <div class="cta">
+            <button id="toggle" class="primary">Start</button>
+            <span id="status" class="status">Idle</span>
+          </div>
+          <p class="fineprint">
+            Needs microphone permission. Use the built-in speaker and mic — Bluetooth
+            headphones cannot carry 20&nbsp;kHz. Best in Chrome on a laptop.
+          </p>
+        </div>
+        <ol class="hero-steps">
+          <li><b>Start</b> and allow the microphone.</li>
+          <li>Watch the <b>spectrogram</b> for a diagonal stripe near 20&nbsp;kHz. That is the chirp.</li>
+          <li>Hold still ~3&nbsp;s so it learns the room.</li>
+          <li><b>Wave your hand</b> at the screen.</li>
+        </ol>
+      </header>
+
+      <div id="warnings" class="warnings" hidden></div>
+
+      <section class="readouts">
+        <div class="card" id="card-presence">
+          <span class="card-label">Presence</span>
+          <span class="card-value" id="presence-value">—</span>
+          <span class="card-sub" id="presence-sub">not running</span>
+        </div>
+        <div class="card" id="card-direction">
+          <span class="card-label">Radial motion</span>
+          <span class="card-value" id="direction-value">—</span>
+          <span class="card-sub" id="direction-sub">approach / recede</span>
+        </div>
+        <div class="card" id="card-gesture">
+          <span class="card-label">Gesture</span>
+          <span class="card-value" id="gesture-value">—</span>
+          <span class="card-sub" id="gesture-sub">swipe toward or away</span>
+        </div>
+        <div class="card" id="card-breathing">
+          <span class="card-label">Breathing</span>
+          <span class="card-value" id="breathing-value">—</span>
+          <span class="card-sub" id="breathing-sub">needs ~20 s of stillness</span>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <h2>Range profile</h2>
+          <p>
+            Echo strength against distance, measured from the direct
+            speaker-to-microphone path. Click the plot to pin the bin used for
+            breathing.
+          </p>
+        </div>
+        <canvas id="range-canvas" width="900" height="260"></canvas>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <h2>Spectrogram</h2>
+          <p>
+            Live microphone spectrum. Each chirp should appear as a short diagonal
+            stripe sweeping up through the dashed band. If this is empty, nothing
+            else can work.
+          </p>
+        </div>
+        <canvas id="spec-canvas" width="900" height="260"></canvas>
+      </section>
+
+      <section class="panel" id="cw-panel">
+        <div class="panel-head">
+          <h2>CW Doppler spectrum</h2>
+          <p>
+            Continuous-tone mode. Energy right of the carrier is approaching, left is
+            receding — the Doppler shift read directly rather than inferred.
+          </p>
+        </div>
+        <canvas id="cw-canvas" width="900" height="260"></canvas>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <h2>Signal controls</h2>
+          <p>Everything here is live; the transmitter is rebuilt as you drag.</p>
+        </div>
+        <div class="controls" id="controls"></div>
+        <div class="control-actions">
+          <button id="reset-bg" class="secondary">Relearn room</button>
+          <button id="clear-track" class="secondary">Unpin breathing bin</button>
+        </div>
+        <p class="audibility" id="audibility"></p>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <h2>Device compatibility</h2>
+          <p>
+            What this machine actually delivered, as opposed to what was requested.
+          </p>
+        </div>
+        <div class="diagnostics" id="diagnostics">
+          <p class="muted">Start the sonar to measure this device.</p>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <p>
+          Runs entirely on your device. No backend, no telemetry, no recording.
+          <a href="https://github.com/" id="repo-link" rel="noreferrer">Source and write-up</a>.
+        </p>
+      </footer>
+    </main>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
